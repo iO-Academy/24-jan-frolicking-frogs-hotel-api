@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,11 +25,11 @@ class BookingController extends Controller
         $booking->start = $request->start;
         $booking->end = $request->end;
 
-        $booking->rooms()->attach($request->room_id);
-
-        $clash = DB::table('rooms')
-            ->where('room_id', '=', $request->room_id)
-            ->where('end', '>', $request->end);
+        $clash = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
+            ->where('room_id', $request->room_id)
+            ->where('end', '>=', $request->start)
+            ->where('start', '<=',$request->start)
+            ->exists();
 
         if ($clash) {
             return response()->json($this->responseService->getFormat(
@@ -37,7 +38,7 @@ class BookingController extends Controller
 
         $save = $booking->save();
 
-
+        $booking->rooms()->attach($request->room_id);
 
         if (!$save) {
             return response()->json($this->responseService->getFormat(
