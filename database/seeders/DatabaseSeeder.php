@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BookingSeeder::class,
             RoomSeeder::class,
-            TypeSeeder::class
+            TypeSeeder::class,
+            LinkSeeder::class
         ]);
         // User::factory(10)->create();
 
