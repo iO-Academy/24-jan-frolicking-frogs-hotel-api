@@ -10,4 +10,5 @@ Route::get('/user', function (Request $request) {
 
 Route::controller(RoomController::class)->group(function () {
    Route::get('/rooms', 'all');
+    Route::get('/rooms/{id}', 'find');
 });

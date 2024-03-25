@@ -23,4 +23,20 @@ class RoomController extends Controller
             Room::with('type:id,name')->get()->makeHidden($hidden)
         ));
     }
+
+    public function find(int $id)
+    {
+        $room = Room::with('type:id,name')->find($id)->makeHidden('type_id');
+
+        if (! $room) {
+            return response()->json([
+                'message' => 'Room with id ' . $id .' not found'
+            ], 404);
+        }
+
+        return response()->json($this->responseService->getFormat(
+            'Room successfully retrieved', $room
+        ), 200);
+
+    }
 }
