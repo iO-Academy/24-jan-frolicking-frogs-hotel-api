@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Room;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BookingSeeder extends Seeder
 {
@@ -50,5 +51,9 @@ class BookingSeeder extends Seeder
             'created_at' => '24/03/30'
         ]
         ];
+
+        foreach ($toInsert as $item) {
+            DB::table('bookings')->insert($item);
+        }
     }
 }

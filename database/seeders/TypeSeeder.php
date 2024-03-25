@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TypeSeeder extends Seeder
 {
@@ -23,5 +24,8 @@ class TypeSeeder extends Seeder
                 'name' => 'Mountain View'
             ]
          ];
+        foreach ($toInsert as $item) {
+            DB::table('types')->insert($item);
+        }
     }
 }
