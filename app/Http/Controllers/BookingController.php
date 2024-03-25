@@ -24,8 +24,11 @@ class BookingController extends Controller
         $booking->start = $request->start;
         $booking->end = $request->end;
 
-        $clash = DB::table('bookings')->where('room_id', '=', $request->room_id)
-            ->where('start', '>', $request->end);
+        $booking->rooms()->attach($request->room_id);
+
+        $clash = DB::table('rooms')
+            ->where('room_id', '=', $request->room_id)
+            ->where('end', '>', $request->end);
 
         if ($clash) {
             return response()->json($this->responseService->getFormat(
@@ -34,7 +37,7 @@ class BookingController extends Controller
 
         $save = $booking->save();
 
-        $booking->rooms()->attach($request->room_id);
+
 
         if (!$save) {
             return response()->json($this->responseService->getFormat(
