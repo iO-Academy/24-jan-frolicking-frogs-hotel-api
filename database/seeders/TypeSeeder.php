@@ -12,6 +12,16 @@ class TypeSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $toInsert = [
+            [
+                'name' => 'Sea View'
+            ],
+            [
+                'name' => 'Beach Front'
+            ],
+            [
+                'name' => 'Mountain View'
+            ]
+         ];
     }
 }
