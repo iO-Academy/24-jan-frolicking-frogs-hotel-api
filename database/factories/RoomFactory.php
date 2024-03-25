@@ -18,14 +18,14 @@ class RoomFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1,100),
+            'id' => $this->faker->numberBetween(1, 100),
             'name' => $this->faker->text(255),
             'rate' => rand(1, 100),
             'image' => $this->faker->imageUrl,
-            'min_capacity' => $this->faker->numberBetween(1,11),
-            'max_capacity' => $this->faker->numberBetween(1,11),
+            'min_capacity' => $this->faker->numberBetween(1, 11),
+            'max_capacity' => $this->faker->numberBetween(1, 11),
             'description' => $this->faker->text(255),
-            'type_id' => Type::factory()
+            'type_id' => Type::factory(),
             //
         ];
     }

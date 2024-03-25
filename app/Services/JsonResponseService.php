@@ -10,7 +10,7 @@ class JsonResponseService
             'message' => $message,
         ];
 
-        if($data) {
+        if ($data) {
             $result['data'] = $data;
         }
 
