@@ -16,11 +16,11 @@ class RoomController extends Controller
     }
     public function all()
     {
-        $hidden = ['description', 'rate'];
+        $hidden = ['description', 'rate', 'type_id'];
 
         return response()->json($this->responseService->getFormat(
             'Rooms successfully retrieved',
-            Room::with('type: id, name')->get()->makeHidden($hidden)
+            Room::with('type:id,name')->get()->makeHidden($hidden)
         ));
     }
 }
