@@ -127,6 +127,5 @@ class BookingTest extends TestCase
             'end' => '2024-04-07',
         ]);
 
-
     }
 }
