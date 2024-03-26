@@ -24,7 +24,7 @@ class RoomFactory extends Factory
             'min_capacity' => $this->faker->numberBetween(1, 11),
             'max_capacity' => $this->faker->numberBetween(1, 11),
             'description' => $this->faker->text(255),
-            'type_id' => Type::factory()
+            'type_id' => Type::factory(),
         ];
     }
 }

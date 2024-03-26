@@ -54,7 +54,7 @@ class RoomTest extends TestCase
 
         $response->assertOk()
             ->assertJson(function (AssertableJson $json) {
-               $json->hasAll(['message', 'data'])
+                $json->hasAll(['message', 'data'])
                     ->has('data', function (AssertableJson $json) {
                         $json->hasAll(['id', 'name', 'rate', 'image', 'min_capacity', 'max_capacity', 'description', 'type'])
                             ->whereAllType([
@@ -64,7 +64,7 @@ class RoomTest extends TestCase
                                 'image' => 'string',
                                 'min_capacity' => 'integer',
                                 'max_capacity' => 'integer',
-                                'description' => 'string'
+                                'description' => 'string',
                             ])
                             ->has('type', function (AssertableJson $json) {
                                 $json->hasAll(['id', 'name'])
