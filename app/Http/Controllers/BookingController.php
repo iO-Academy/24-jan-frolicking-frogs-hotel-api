@@ -29,6 +29,7 @@ class BookingController extends Controller
         $clashingDates = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
             ->where('room_id', $request->room_id)
             ->where('end', '>=', $request->start)
+            ->where('start', '<=', $request->end)
             ->exists();
 
         if ($clashingDates) {
