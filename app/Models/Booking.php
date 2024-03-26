@@ -10,7 +10,7 @@ class Booking extends Model
 {
     use HasFactory;
 
-    public $hidden = ['pivot'];
+    public $hidden = ['pivot', 'updated_at'];
 
     public function rooms(): BelongsToMany
     {
