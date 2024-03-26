@@ -82,9 +82,10 @@ class BookingTest extends TestCase
 
     public function test_create_booking_success()
     {
-        $booking = Booking::factory()->hasAttached(Room::factory())->create();
-        $booking->start = '2024-03-30';
-        $booking->end = '2024-04-04';
+
+        $booking = Booking::factory()->has(Room::factory())->create();
+        $booking->start = '2024-03-27';
+        $booking->end = '2024-03-28';
         $booking->save();
 
         $response = $this->postJson('/api/bookings', [
@@ -113,6 +114,39 @@ class BookingTest extends TestCase
                                     ->whereAllType([
                                         'id' => 'integer',
                                         'name' => 'string',
+                                    ]);
+
+                            });
+                    });
+            });
+    }
+
+    public function test_getAllBookingsSuccess(): void
+    {
+        $booking = Booking::factory()->has(Room::factory())->create();
+        $booking->start='2024-03-27';
+        $booking->end='2024-03-28';
+        $booking->save();
+
+        $response = $this->getJson('/api/bookings');
+        $response->assertStatus(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                    ->whereType('message', 'string')
+                    ->has('data', 1, function (AssertableJson $json){
+                        $json->hasAll(['id', 'customer', 'start', 'end', 'created_at', 'rooms'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'customer' => 'string',
+                                'start' => 'string',
+                                'end' => 'string',
+                                'created_at' => 'string'
+                            ])
+                            ->has('rooms', 1, function (AssertableJson $json){
+                                $json->hasAll(['id', 'name'])
+                                    ->whereAllType([
+                                        'id' => 'integer',
+                                        'name' => 'string'
                                     ]);
 
                             });
