@@ -4,14 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Room;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class RoomTest extends TestCase
 {
     use DatabaseMigrations;
+
     /**
      * A basic feature test example.
      */
@@ -21,11 +20,9 @@ class RoomTest extends TestCase
         $response = $this->getJson('/api/rooms');
 
         $response->assertStatus(200)
-            ->assertJson(function (AssertableJson $json)
-            {
+            ->assertJson(function (AssertableJson $json) {
                 $json->hasAll(['message', 'data'])
-                    ->has('data',1, function (AssertableJson $json)
-                    {
+                    ->has('data', 1, function (AssertableJson $json) {
                         $json->hasAll(['id', 'name', 'image', 'min_capacity', 'max_capacity', 'type'])
                             ->whereAllType([
                                 'id' => 'integer',
@@ -35,22 +32,17 @@ class RoomTest extends TestCase
                                 'max_capacity' => 'integer',
 
                             ])
-                            ->has('type', function (AssertableJson $json)
-                            {
+                            ->has('type', function (AssertableJson $json) {
                                 $json->hasAll(['id', 'name'])
                                     ->whereAllType([
                                         'id' => 'integer',
-                                        'name' => 'string'
+                                        'name' => 'string',
                                     ]);
                             }
 
                             );
                     });
-            })
-        ;
-
-
-
+            });
 
     }
 }

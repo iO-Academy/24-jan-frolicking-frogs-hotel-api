@@ -48,6 +48,15 @@ class BookingSeeder extends Seeder
                 'end' => '24/04/13',
                 'created_at' => '24/03/30',
             ],
+            [
+                'customer' => 'Robert Robertson',
+                'guests' => '2',
+                'start' => '23/01/02',
+                'end' => '23/01/10',
+                'created_at' => '23/01/02',
+            ],
+
+
         ];
 
         foreach ($toInsert as $item) {

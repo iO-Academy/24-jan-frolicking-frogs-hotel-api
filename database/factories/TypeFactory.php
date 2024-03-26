@@ -18,7 +18,7 @@ class TypeFactory extends Factory
     {
         return [
             'id' => $this->faker->numberBetween(1, 100),
-            'name' => $this->faker->text(255)
+            'name' => $this->faker->text(255),
         ];
     }
 }
