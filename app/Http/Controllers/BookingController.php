@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
@@ -66,6 +67,23 @@ class BookingController extends Controller
         return response()->json($this->responseService->getFormat(
             'Booking Created'
         ), 201);
+
+    }
+
+    public function report()
+    {
+        $report = Room::select('rooms.id', 'rooms.name')
+            ->withCount('bookings as booking_count')
+            ->with(['bookings' => function ($query) {
+                $query->selectRaw('ROUND(AVG(DATEDIFF(end, start))) as average_booking_duration')
+                    ->groupBy('booking_room.room_id', 'booking_room.booking_id');
+            }])
+            ->get();
+
+        return response()->json($this->responseService->getFormat(
+            'report generated',
+            $report
+        ));
 
     }
 }
