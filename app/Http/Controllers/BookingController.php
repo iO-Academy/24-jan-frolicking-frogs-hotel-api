@@ -77,13 +77,13 @@ class BookingController extends Controller
         $hidden = ['guests', 'updated_at'];
         $date = today()->toDateString();
 
-        $users = DB::table('bookings')
-            ->whereDate('end', '2016-12-31')
-            ->get();
+//        $users = DB::table('bookings')
+//            ->whereDate('end', '2016-12-31')
+//            ->get();
 
             return response()->json($this->responseService->getFormat(
                 'Bookings successfully retrieved',
-                Booking::with('rooms:name')->whereDate('end', '>', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+                Booking::with('rooms:name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
             ));
 
     }
