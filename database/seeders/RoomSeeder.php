@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +20,7 @@ class RoomSeeder extends Seeder
                 'min_capacity' => '1',
                 'max_capacity' => '6',
                 'description' => 'Two king beds and two queen beds, One full size sofabed; one rollaway and one crib on request',
-                'type_id' => '3'
+                'type_id' => '3',
             ],
             [
                 'name' => 'Honeymoon',
@@ -30,7 +29,7 @@ class RoomSeeder extends Seeder
                 'min_capacity' => '1',
                 'max_capacity' => '2',
                 'description' => 'King bed with customizable mattress, One rollaway, one crib (on request) and one sofabed (included)',
-                'type_id' => '2'
+                'type_id' => '2',
             ],
             [
                 'name' => 'Deluxe',
@@ -39,7 +38,7 @@ class RoomSeeder extends Seeder
                 'min_capacity' => '1',
                 'max_capacity' => '3',
                 'description' => 'High-speed internet access, Sleeps 3, 28 sq m, 1 King Bed',
-                'type_id' => '1'
+                'type_id' => '1',
             ],
             [
                 'name' => 'Double',
@@ -48,8 +47,8 @@ class RoomSeeder extends Seeder
                 'min_capacity' => '1',
                 'max_capacity' => '2',
                 'description' => 'Free WiFi, Sleeps 2, 10 sq m, 1 Double Bed',
-                'type_id' => '2'
-            ]
+                'type_id' => '2',
+            ],
         ];
 
         foreach ($toInsert as $item) {

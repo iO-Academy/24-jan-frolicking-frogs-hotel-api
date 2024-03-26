@@ -10,9 +10,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(RoomController::class)->group(function () {
-   Route::get('/rooms', 'all');
+    Route::get('/rooms', 'all');
 });
 
-Route::controller(BookingController::class)->group(function() {
+Route::controller(BookingController::class)->group(function () {
     Route::post('/bookings', 'create');
 });
