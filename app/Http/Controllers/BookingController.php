@@ -20,37 +20,37 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $hidden = ['created_at', 'updated_at'];
-        $booking = new Booking();
-
-        $booking->customer = $request->customer;
-        $booking->guests = $request->guests;
-        $booking->start = $request->start;
-        $booking->end = $request->end;
 
         if ($request->end < $request->start) {
             return response()->json($this->responseService->getFormat(
                 'Start date must be before the end date'), 400);
         }
 
-        $clash = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
+        $clashingDates = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
             ->where('room_id', $request->room_id)
             ->where('end', '>=', $request->start)
-            ->where('start', '<=', $request->start)
+            ->where('start', '<=', $request->end)
             ->exists();
 
-        if ($clash) {
+        if ($clashingDates) {
             return response()->json($this->responseService->getFormat(
                 'Room unavailable for the chosen dates'), 400);
 
         }
 
-        $clash2 = Room::query()->select('*')
-            ->where('id', $request->room_id);
+        $room = Room::find($request->room_id);
 
-        if ($clash2->value('max_capacity') < $request->guests) {
+        if ($room->value('max_capacity') < $request->guests | $room->value('min_capacity') > $request->guests) {
             return response()->json($this->responseService->getFormat(
-                'The '.$clash2->value('name').' room can only accommodate between '.$clash2->value('min_capacity').' and '.$clash2->value('max_capacity').' guests'), 400);
+                'The '.$room->value('name').' room can only accommodate between '.$room->value('min_capacity').' and '.$room->value('max_capacity').' guests'), 400);
         }
+
+        $booking = new Booking();
+
+        $booking->customer = $request->customer;
+        $booking->guests = $request->guests;
+        $booking->start = $request->start;
+        $booking->end = $request->end;
 
         $save = $booking->save();
 
