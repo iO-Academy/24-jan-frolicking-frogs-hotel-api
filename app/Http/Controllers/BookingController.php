@@ -69,4 +69,16 @@ class BookingController extends Controller
         ), 201);
 
     }
+
+    public function all()
+    {
+        $hidden = ['guests', 'updated_at'];
+        $date = today()->toDateString();
+
+        return response()->json($this->responseService->getFormat(
+            'Bookings successfully retrieved',
+            Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+        ));
+
+    }
 }
