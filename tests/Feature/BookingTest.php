@@ -100,5 +100,14 @@ class BookingTest extends TestCase
                 $json->hasAll(['message'])
                     ->whereType('message', 'string');
             });
+
+        $this->assertDatabaseHas('bookings', [
+            'customer' => 'sarah',
+            'guests' => 1,
+            'start' => '2024-04-05',
+            'end' => '2024-04-07',
+        ]);
+
+
     }
 }
