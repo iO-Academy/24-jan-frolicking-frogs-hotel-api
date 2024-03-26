@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 
 class BookingController extends Controller
 {
@@ -61,6 +58,7 @@ class BookingController extends Controller
 
         if (! $save) {
             Log::error('Booking failed');
+
             return response()->json($this->responseService->getFormat(
                 'Booking not saved'
             ), 500);
@@ -77,14 +75,14 @@ class BookingController extends Controller
         $hidden = ['guests', 'updated_at'];
         $date = today()->toDateString();
 
-//        $users = DB::table('bookings')
-//            ->whereDate('end', '2016-12-31')
-//            ->get();
+        //        $users = DB::table('bookings')
+        //            ->whereDate('end', '2016-12-31')
+        //            ->get();
 
-            return response()->json($this->responseService->getFormat(
-                'Bookings successfully retrieved',
-                Booking::with('rooms:name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
-            ));
+        return response()->json($this->responseService->getFormat(
+            'Bookings successfully retrieved',
+            Booking::with('rooms:name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+        ));
 
     }
 }

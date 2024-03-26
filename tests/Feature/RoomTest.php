@@ -45,4 +45,48 @@ class RoomTest extends TestCase
             });
 
     }
+
+    public function test_getSingleRoomValid(): void
+    {
+        $room = Room::factory()->create();
+
+        $response = $this->getJson('/api/rooms/1');
+
+        $response->assertOk()
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                    ->has('data', function (AssertableJson $json) {
+                        $json->hasAll(['id', 'name', 'rate', 'image', 'min_capacity', 'max_capacity', 'description', 'type'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'name' => 'string',
+                                'rate' => 'integer',
+                                'image' => 'string',
+                                'min_capacity' => 'integer',
+                                'max_capacity' => 'integer',
+                                'description' => 'string',
+                            ])
+                            ->has('type', function (AssertableJson $json) {
+                                $json->hasAll(['id', 'name'])
+                                    ->whereAllType([
+                                        'id' => 'integer',
+                                        'name' => 'string',
+                                    ]);
+                            }
+
+                            );
+                    });
+            });
+    }
+
+    public function test_getSingleRoomInvalid(): void
+    {
+        $response = $this->getJson('/api/rooms/100');
+
+        $response->assertStatus(404)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message'])
+                    ->whereType('message', 'string');
+            });
+    }
 }

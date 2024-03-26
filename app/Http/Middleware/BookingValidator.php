@@ -20,7 +20,7 @@ class BookingValidator
             'customer' => 'required|string|max:100',
             'guests' => 'required|integer',
             'start' => 'required|date',
-            'end' => 'required|date'
+            'end' => 'required|date',
         ]);
 
         return $next($request);

@@ -16,7 +16,7 @@ class RequestLogger
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info('We received a ' . $request->method() . ' request to ' . $request->url());
+        Log::info('We received a '.$request->method().' request to '.$request->url());
 
         return $next($request);
     }

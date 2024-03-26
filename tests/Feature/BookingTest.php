@@ -5,15 +5,12 @@ namespace Tests\Feature;
 use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class BookingTest extends TestCase
 {
     use DatabaseMigrations;
-
 
     public function test_create_booking_invalid()
     {
@@ -23,7 +20,7 @@ class BookingTest extends TestCase
 
     public function test_create_booking_noDateAvailable()
     {
-        $booking =  Booking::factory()->hasAttached(Room::factory())->create();
+        $booking = Booking::factory()->hasAttached(Room::factory())->create();
         $booking->start = '2024-03-30';
         $booking->end = '2024-04-04';
         $booking->save();
@@ -33,7 +30,7 @@ class BookingTest extends TestCase
             'customer' => 'sarah',
             'guests' => 1,
             'start' => '2024-04-02',
-            'end' => '2024-04-05'
+            'end' => '2024-04-05',
         ]);
 
         $response->assertStatus(400)
@@ -52,7 +49,7 @@ class BookingTest extends TestCase
             'customer' => 'sarah',
             'guests' => 1,
             'start' => '2024-04-06',
-            'end' => '2024-04-05'
+            'end' => '2024-04-05',
         ]);
 
         $response->assertStatus(400)
@@ -73,7 +70,7 @@ class BookingTest extends TestCase
             'customer' => 'sarah',
             'guests' => 3,
             'start' => '2024-04-06',
-            'end' => '2024-04-05'
+            'end' => '2024-04-05',
         ]);
 
         $response->assertStatus(400)
@@ -85,7 +82,7 @@ class BookingTest extends TestCase
 
     public function test_create_booking_success()
     {
-        $booking =  Booking::factory()->hasAttached(Room::factory())->create();
+        $booking = Booking::factory()->hasAttached(Room::factory())->create();
         $booking->start = '2024-03-30';
         $booking->end = '2024-04-04';
         $booking->save();
@@ -95,7 +92,7 @@ class BookingTest extends TestCase
             'customer' => 'sarah',
             'guests' => 1,
             'start' => '2024-04-05',
-            'end' => '2024-04-07'
+            'end' => '2024-04-07',
         ]);
 
         $response->assertStatus(201)
@@ -104,6 +101,4 @@ class BookingTest extends TestCase
                     ->whereType('message', 'string');
             });
     }
-
-
 }

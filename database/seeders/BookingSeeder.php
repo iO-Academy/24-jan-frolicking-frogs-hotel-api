@@ -56,7 +56,6 @@ class BookingSeeder extends Seeder
                 'created_at' => '23/01/02',
             ],
 
-
         ];
 
         foreach ($toInsert as $item) {

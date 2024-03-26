@@ -13,7 +13,7 @@ class BookingFactory extends Factory
     {
         return [
             'customer' => $this->faker->name(),
-            'guests' => rand(1,11),
+            'guests' => rand(1, 11),
             'start' => $this->faker->date('1900-12-08', '2055-12-08'),
             'end' => $this->faker->date('1900-12-08', '2055-12-08'),
         ];
