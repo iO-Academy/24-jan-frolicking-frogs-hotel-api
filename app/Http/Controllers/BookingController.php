@@ -8,6 +8,7 @@ use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Stmt\Expression;
 
 class BookingController extends Controller
 {
@@ -73,9 +74,9 @@ class BookingController extends Controller
     public function report()
     {
         $report = Room::select('rooms.id', 'rooms.name')
-            ->withCount('bookings as booking_count')
+            ->withCount('bookings')
             ->with(['bookings' => function ($query) {
-                $query->selectRaw('ROUND(AVG(DATEDIFF(end, start))) as average_booking_duration')
+                $query->selectRaw('ROUND(AVG(DATEDIFF(end, start))) as days_booked')
                     ->groupBy('booking_room.room_id', 'booking_room.booking_id');
             }])
             ->get();
