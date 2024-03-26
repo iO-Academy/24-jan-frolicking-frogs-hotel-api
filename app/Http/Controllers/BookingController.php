@@ -73,32 +73,26 @@ class BookingController extends Controller
     public function all(Request $request)
     {
         $search = $request->input('room_id');
-        $hidden = ['guests', 'room_id', 'booking_id'];
-        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')->with('rooms:id,name')->where('room_id', '=', "$search")->get()->makeHidden($hidden);
+        $hidden = ['guests', 'room_id', 'booking_id', 'guests', 'updated_at'];
+        $date = today()->toDateString();
+        $data = Booking::with(['rooms:id,name'])->whereRelation('rooms', 'room_id', '=', "$search")
+            ->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden);
 
         if ($search) {
 
-            return response()->json($this->responseService->getFormat(
-                'Bookings successfully retrieved',
-                $data
-            ), 200);
-
-            if ($data = 0) {
-
+            if ($data->isEmpty()) {
                 return response()->json($this->responseService->getFormat(
-                    'Bookings not retrieved'
-                ), 422);
+                    'No Bookings'));
             }
 
+            return response()->json($this->responseService->getFormat(
+                'Bookings successfully retrieved by room',
+            $data), 200);
         }
-
-        $hidden = ['guests', 'updated_at'];
-        $date = today()->toDateString();
 
         return response()->json($this->responseService->getFormat(
             'Bookings successfully retrieved',
             Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
         ));
-
     }
 }
