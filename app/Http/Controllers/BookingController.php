@@ -74,7 +74,8 @@ class BookingController extends Controller
     {
         $search = $request->input('room_id');
         $hidden = ['guests', 'room_id', 'booking_id'];
-        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')->with('rooms:id,name')->where('room_id', '=', "$search")->get()->makeHidden($hidden);
+        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')->with('rooms:id,name')->where('room_id', 'LIKE', "$search")->get()->makeHidden($hidden);
+
 
         if ($search) {
 
@@ -82,14 +83,6 @@ class BookingController extends Controller
                 'Bookings successfully retrieved',
                 $data
             ), 200);
-
-            if ($data = 0) {
-
-                return response()->json($this->responseService->getFormat(
-                    'Bookings not retrieved'
-                ), 422);
-            }
-
         }
 
         $hidden = ['guests', 'updated_at'];
