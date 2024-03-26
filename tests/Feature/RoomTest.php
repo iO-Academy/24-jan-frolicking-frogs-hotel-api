@@ -81,8 +81,6 @@ class RoomTest extends TestCase
 
     public function test_getSingleRoomInvalid(): void
     {
-        Room::factory()->create();
-
         $response = $this->getJson('/api/rooms/100');
 
         $response->assertStatus(404)
