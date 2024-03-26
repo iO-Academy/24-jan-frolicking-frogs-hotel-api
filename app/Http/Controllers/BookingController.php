@@ -49,14 +49,14 @@ class BookingController extends Controller
 
         if ($clash2->value('max_capacity') < $request->guests) {
             return response()->json($this->responseService->getFormat(
-                'The ' . $clash2->value('name') . ' room can only accommodate between ' . $clash2->value('min_capacity') . ' and ' . $clash2->value('max_capacity') . ' guests'), 400);
+                'The '.$clash2->value('name').' room can only accommodate between '.$clash2->value('min_capacity').' and '.$clash2->value('max_capacity').' guests'), 400);
         }
 
         $save = $booking->save();
 
         $booking->rooms()->attach($request->room_id);
 
-        if (!$save) {
+        if (! $save) {
             Log::error('Booking failed');
 
             return response()->json($this->responseService->getFormat(
@@ -70,8 +70,28 @@ class BookingController extends Controller
 
     }
 
-    public function all()
+    public function all(Request $request)
     {
+        $search = $request->input('room_id');
+        $hidden = ['guests', 'room_id', 'booking_id'];
+        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')->with('rooms:id,name')->where('room_id', '=', "$search")->get()->makeHidden($hidden);
+
+        if ($search) {
+
+            return response()->json($this->responseService->getFormat(
+                'Bookings successfully retrieved',
+                $data
+            ), 200);
+
+            if ($data = 0) {
+
+                return response()->json($this->responseService->getFormat(
+                    'Bookings not retrieved'
+                ), 422);
+            }
+
+        }
+
         $hidden = ['guests', 'updated_at'];
         $date = today()->toDateString();
 
