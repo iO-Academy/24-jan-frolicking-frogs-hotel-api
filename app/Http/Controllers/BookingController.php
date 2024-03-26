@@ -65,7 +65,7 @@ class BookingController extends Controller
 
             return response()->json($this->responseService->getFormat(
                 'Bookings successfully retrieved',
-                Booking::with('rooms:id,name')->whereDate('end', '>', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+                Booking::with('rooms:name')->whereDate('end', '>', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
             ));
 
 
