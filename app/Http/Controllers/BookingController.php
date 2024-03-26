@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -54,6 +55,7 @@ class BookingController extends Controller
         $booking->rooms()->attach($request->room_id);
 
         if (! $save) {
+            Log::error('Booking failed');
             return response()->json($this->responseService->getFormat(
                 'Booking not saved'
             ), 500);
