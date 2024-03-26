@@ -11,8 +11,7 @@ class Room extends Model
 {
     use HasFactory;
 
-
-    public $hidden = ['created_at', 'updated_at', 'pivot'];
+    public $hidden = ['created_at', 'updated_at', 'pivot', 'id'];
 
     public function type(): BelongsTo
     {
@@ -23,5 +22,4 @@ class Room extends Model
     {
         return $this->belongsToMany(Booking::class);
     }
-
 }

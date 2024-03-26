@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Services\JsonResponseService;
-use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
@@ -14,6 +13,7 @@ class RoomController extends Controller
     {
         $this->responseService = $responseService;
     }
+
     public function all()
     {
         $hidden = ['description', 'rate', 'type_id'];
@@ -30,7 +30,7 @@ class RoomController extends Controller
 
         if (! $room) {
             return response()->json([
-                'message' => 'Room with id ' . $id .' not found'
+                'message' => 'Room with id '.$id.' not found',
             ], 404);
         }
 

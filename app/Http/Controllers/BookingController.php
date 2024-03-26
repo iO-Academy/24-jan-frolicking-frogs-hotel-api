@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Room;
 use App\Services\JsonResponseService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +17,7 @@ class BookingController extends Controller
     {
         $this->responseService = $responseService;
     }
+
     public function create(Request $request)
     {
         $booking = new Booking();
@@ -32,21 +35,36 @@ class BookingController extends Controller
 
         if ($clash) {
             return response()->json($this->responseService->getFormat(
-                'Room unavailable for the chosen dates'),400);
+                'Room unavailable for the chosen dates'), 400);
         }
 
         $save = $booking->save();
 
-
-
-        if (!$save) {
+        if (! $save) {
             return response()->json($this->responseService->getFormat(
                 'Booking not saved'
-            ),500);
+            ), 500);
         }
 
         return response()->json($this->responseService->getFormat(
             'Booking Created'
-        ),201);
+        ), 201);
+    }
+
+    public function all()
+    {
+        $hidden = ['guests', 'updated_at'];
+        $date = today()->toDateString();
+
+        $users = DB::table('bookings')
+            ->whereDate('end', '2016-12-31')
+            ->get();
+
+            return response()->json($this->responseService->getFormat(
+                'Bookings successfully retrieved',
+                Booking::with('rooms:id,name')->whereDate('end', '>', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+            ));
+
+
     }
 }
