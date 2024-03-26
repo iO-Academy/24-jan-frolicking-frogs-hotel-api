@@ -22,6 +22,7 @@ class BookingController extends Controller
 
     public function create(Request $request)
     {
+        $hidden = ['created_at', 'updated_at'];
         $booking = new Booking();
 
         $booking->customer = $request->customer;

@@ -17,7 +17,11 @@ class BookingFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'customer' => $this->faker->sentence(2),
+            'guests' => rand(1,11),
+            'start' => $this->faker->date('1900-12-08', '2055-12-08'),
+            'end' => $this->faker->date('1900-12-08', '2055-12-08'),
+
         ];
     }
 }
