@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -15,6 +16,7 @@ class BookingController extends Controller
     {
         $this->responseService = $responseService;
     }
+
     public function create(Request $request)
     {
         $hidden = ['created_at', 'updated_at'];
@@ -25,29 +27,43 @@ class BookingController extends Controller
         $booking->start = $request->start;
         $booking->end = $request->end;
 
-        $booking->rooms()->attach($request->room_id);
+        if ($request->end < $request->start) {
+            return response()->json($this->responseService->getFormat(
+                'Start date must be before the end date'), 400);
+        }
 
-        $clash = DB::table('rooms')
-            ->where('room_id', '=', $request->room_id)
-            ->where('end', '>', $request->end);
+        $clash = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
+            ->where('room_id', $request->room_id)
+            ->where('end', '>=', $request->start)
+            ->where('start', '<=', $request->start)
+            ->exists();
 
         if ($clash) {
             return response()->json($this->responseService->getFormat(
-                'Room unavailable for the chosen dates'),400);
+                'Room unavailable for the chosen dates'), 400);
+        }
+
+        $clash2 = Room::query()->select('*')
+            ->where('id', $request->room_id);
+
+        if ($clash2->value('max_capacity') < $request->guests) {
+            return response()->json($this->responseService->getFormat(
+                'The '.$clash2->value('name').' room can only accommodate between '.$clash2->value('min_capacity').' and '.$clash2->value('max_capacity').' guests'), 400);
         }
 
         $save = $booking->save();
 
+        $booking->rooms()->attach($request->room_id);
 
-
-        if (!$save) {
+        if (! $save) {
+            Log::error('Booking failed');
             return response()->json($this->responseService->getFormat(
                 'Booking not saved'
-            ),500);
+            ), 500);
         }
 
         return response()->json($this->responseService->getFormat(
             'Booking Created'
-        ),201);
+        ), 201);
     }
 }
