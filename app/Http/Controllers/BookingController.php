@@ -78,7 +78,6 @@ class BookingController extends Controller
 
 
         if ($search) {
-
             return response()->json($this->responseService->getFormat(
                 'Bookings successfully retrieved',
                 $data
