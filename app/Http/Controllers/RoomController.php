@@ -18,7 +18,6 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
-
         $search = $request->input('type');
         $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get();
 
@@ -31,6 +30,7 @@ class RoomController extends Controller
 
             return response()->json(['data' => $data],200);
         }
+
 
         $hidden = ['description', 'rate'];
 
