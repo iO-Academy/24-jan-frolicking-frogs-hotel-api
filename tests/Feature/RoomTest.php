@@ -122,4 +122,17 @@ class RoomTest extends TestCase
                     });
             });
     }
+
+    public function test_searchByTypeIdFail(): void
+    {
+        Room::factory()->count(1)->create();
+
+        $response = $this->getJson('/api/rooms?type=100');
+
+        $response->assertOk(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message'])
+                    ->whereType('message', 'string');
+            });
+    }
 }
