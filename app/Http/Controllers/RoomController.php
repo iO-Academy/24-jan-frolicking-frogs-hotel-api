@@ -18,21 +18,33 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
-        $search = $request->input('type');
-        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get();
+        $hidden = ['description', 'rate'];
+
+        $filter = Room::query()->with('type:id,name');
+
+        $searchType = $request->input('type');
+        $searchCapacity = $request->input('guests');
+        $search = $searchCapacity + $searchType;
 
         if ($search) {
 
-            if ($data->isEmpty()) {
-                return response()->json($this->responseService->getFormat(
-                    'The selected type is invalid.'));
+            $request->validate([
+                'type' => 'exists:types,id',
+                'guests' => 'integer|min:0'
+            ]);
+
+            if ($searchType) {
+                $filter->whereRelation('type', 'type_id', '=', "$searchType");
+
+            }
+            if ($searchCapacity) {
+                $filter->where('min_capacity', '<=', "$searchCapacity")
+                    ->where('max_capacity', '>=', "$searchCapacity");
             }
 
-            return response()->json(['data' => $data],200);
+            return response()->json($this->responseService->getFormat(
+                'Filtered Rooms retrieved', $filter->get()->makeHidden($hidden)));
         }
-
-
-        $hidden = ['description', 'rate'];
 
         return response()->json($this->responseService->getFormat(
             'Rooms successfully retrieved',
