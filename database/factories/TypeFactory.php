@@ -17,7 +17,6 @@ class TypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'name' => $this->faker->text(255),
         ];
     }
