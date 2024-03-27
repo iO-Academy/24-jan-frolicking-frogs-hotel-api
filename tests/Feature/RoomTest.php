@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Room;
+use App\Models\Type;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -87,6 +88,39 @@ class RoomTest extends TestCase
             ->assertJson(function (AssertableJson $json) {
                 $json->hasAll(['message'])
                     ->whereType('message', 'string');
+            });
+    }
+
+    public function test_searchByTypeIdSuccess(): void
+    {
+        Room::factory()->count(1)->create();
+
+        $response = $this->getJson('/api/rooms?type=1');
+
+        $response->assertOk(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['data'])
+                    ->has('data', 1, function (AssertableJson $json) {
+                        $json->hasAll(['id', 'name', 'rate', 'image', 'min_capacity', 'max_capacity', 'description', 'type'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'name' => 'string',
+                                'rate' => 'integer',
+                                'image' => 'string',
+                                'min_capacity' => 'integer',
+                                'max_capacity' => 'integer',
+                                'description' => 'string'
+                            ])
+                            ->has('type', function (AssertableJson $json) {
+                                $json->hasAll(['id', 'name'])
+                                    ->whereAllType([
+                                        'id' => 'integer',
+                                        'name' => 'string',
+                                    ]);
+                            }
+
+                            );
+                    });
             });
     }
 }
