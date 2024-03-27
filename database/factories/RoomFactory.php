@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Friend;
 use App\Models\Room;
 use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,8 +22,8 @@ class RoomFactory extends Factory
             'name' => $this->faker->text(255),
             'rate' => rand(1, 100),
             'image' => $this->faker->imageUrl(400, 400),
-            'min_capacity' => 3,
             'max_capacity' => 5,
+            'min_capacity' => 2,
             'description' => $this->faker->text(255),
             'type_id' => Type::factory(),
         ];

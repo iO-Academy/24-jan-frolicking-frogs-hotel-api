@@ -80,6 +80,25 @@ class BookingTest extends TestCase
             });
     }
 
+    public function test_createBooking_GuestSize_BelowMin()
+    {
+        $room = Room::factory()->create();
+
+        $response = $this->postJson('/api/bookings', [
+            'room_id' => 1,
+            'customer' => 'sarah',
+            'guests' => 1,
+            'start' => '2024-04-06',
+            'end' => '2024-04-05',
+        ]);
+
+        $response->assertStatus(400)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message'])
+                    ->whereType('message', 'string');
+            });
+    }
+
     public function test_create_booking_success()
     {
 
@@ -91,7 +110,7 @@ class BookingTest extends TestCase
         $response = $this->postJson('/api/bookings', [
             'room_id' => 1,
             'customer' => 'sarah',
-            'guests' => 1,
+            'guests' => 2,
             'start' => '2024-04-05',
             'end' => '2024-04-07',
         ]);
@@ -101,6 +120,14 @@ class BookingTest extends TestCase
                 $json->hasAll(['message'])
                     ->whereType('message', 'string');
             });
+
+        $this->assertDatabaseHas('bookings', [
+            'customer' => 'sarah',
+            'guests' => 2,
+            'start' => '2024-04-05',
+            'end' => '2024-04-07',
+        ]);
+
     }
 
     public function test_getAllBookingsSuccess(): void
@@ -152,5 +179,27 @@ class BookingTest extends TestCase
         $this->assertDatabaseMissing('bookings', [
             'name' => $booking->customer
         ]);
+    }
+
+    public function test_get_booking_report_success(): void
+    {
+        Booking::factory()->hasAttached(Room::factory())->create();
+
+        $response = $this->getJson('/api/bookings/report');
+
+        $response->assertStatus(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                ->whereType('message', 'string')
+                ->has('data', 1, function (AssertableJson $json) {
+                    $json->hasAll(['id', 'name', 'booking_count', 'average_booking_duration'])
+                        ->whereAllType([
+                            'id' => 'integer',
+                            'name' => 'string',
+                            'booking_count' => 'integer',
+                            'average_booking_duration' => 'integer'
+                        ]);
+                });
+            });
     }
 }
