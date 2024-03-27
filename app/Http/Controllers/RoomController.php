@@ -37,18 +37,17 @@ class RoomController extends Controller
                 'end' => 'date'
             ]);
 
-            if ($filterType) {
-                $filter->whereRelation('type', 'type_id', '=', "$filterType");
-
-            }
-            if ($filterCapacity) {
-                $filter->where('min_capacity', '<=', "$filterCapacity")
-                    ->where('max_capacity', '>=', "$filterCapacity");
-            }
             if ($filterAvailableEnd && $filterAvailableStart) {
                 $filter->whereRelation('booking', 'start', '<=', $filterAvailableStart)
                     ->whereRelation('booking', 'end', '<=', $filterAvailableStart)
                     ->orWhereRelation('booking','start', '>=', $filterAvailableEnd);
+            }
+            if ($filterType) {
+                $filter->whereRelation('type', 'type_id', '=', "$filterType");
+            }
+            if ($filterCapacity) {
+                $filter->where('min_capacity', '<=', "$filterCapacity")
+                    ->where('max_capacity', '>=', "$filterCapacity");
             }
 
             return response()->json($this->responseService->getFormat(
