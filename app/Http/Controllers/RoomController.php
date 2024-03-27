@@ -18,24 +18,32 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
-        $hidden = ['description', 'rate'];
+        $hidden = ['description', 'rate', 'booking'];
 
-        $filter = Room::query()->with('type:id,name');
+        $filter = Room::query()->with(['type:id,name', 'booking:id,start,end']);
 
         $filterType = $request->input('type');
         $filterCapacity = $request->input('guests');
-        $filterRooms = $filterCapacity + $filterType;
+        $filterAvailableStart = $request->input('start');
+        $filterAvailableEnd = $request->input('end');
+        $filterRooms = [$filterCapacity, $filterType, $filterAvailableEnd, $filterAvailableStart];
 
         if ($filterRooms) {
 
             $request->validate([
                 'type' => 'exists:types,id',
-                'guests' => 'integer|min:0'
+                'guests' => 'integer|min:0',
+                'start' => 'date',
+                'end' => 'date'
             ]);
 
+            if ($filterAvailableEnd && $filterAvailableStart) {
+                $filter->whereRelation('booking', 'start', '<=', $filterAvailableStart)
+                    ->whereRelation('booking', 'end', '<=', $filterAvailableStart)
+                    ->orWhereRelation('booking','start', '>=', $filterAvailableEnd);
+            }
             if ($filterType) {
                 $filter->whereRelation('type', 'type_id', '=', "$filterType");
-
             }
             if ($filterCapacity) {
                 $filter->where('min_capacity', '<=', "$filterCapacity")
