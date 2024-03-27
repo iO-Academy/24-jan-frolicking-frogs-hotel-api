@@ -150,4 +150,23 @@ class BookingTest extends TestCase
             });
 
     }
+
+    public function test_cancelBookingById_Success():void
+{
+    $booking = Booking::factory()->create();
+
+    $response = $this->deleteJson('api/bookings/1');
+    $response->assertOk()
+        ->assertJson(function (AssertableJson $json) {
+            $json->hasAll(['message'])
+                ->whereType('message', 'string');
+        });
+        $this->assertDatabaseMissing('bookings', [
+                '"room_id": 2,
+                  "customer": "name",
+                  "guests": 1,
+                  "start": "2024-03-01",
+                  "end": "2024-05-01"'
+            ]);
+}
 }
