@@ -22,24 +22,24 @@ class RoomController extends Controller
 
         $filter = Room::query()->with('type:id,name');
 
-        $searchType = $request->input('type');
-        $searchCapacity = $request->input('guests');
-        $search = $searchCapacity + $searchType;
+        $filterType = $request->input('type');
+        $filterCapacity = $request->input('guests');
+        $filterRooms = $filterCapacity + $filterType;
 
-        if ($search) {
+        if ($filterRooms) {
 
             $request->validate([
                 'type' => 'exists:types,id',
                 'guests' => 'integer|min:0'
             ]);
 
-            if ($searchType) {
-                $filter->whereRelation('type', 'type_id', '=', "$searchType");
+            if ($filterType) {
+                $filter->whereRelation('type', 'type_id', '=', "$filterType");
 
             }
-            if ($searchCapacity) {
-                $filter->where('min_capacity', '<=', "$searchCapacity")
-                    ->where('max_capacity', '>=', "$searchCapacity");
+            if ($filterCapacity) {
+                $filter->where('min_capacity', '<=', "$filterCapacity")
+                    ->where('max_capacity', '>=', "$filterCapacity");
             }
 
             return response()->json($this->responseService->getFormat(
