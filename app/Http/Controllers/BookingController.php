@@ -6,9 +6,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use PhpParser\Node\Stmt\Expression;
 
 class BookingController extends Controller
 {
@@ -73,17 +71,49 @@ class BookingController extends Controller
 
     public function report()
     {
-        $report = Room::select('rooms.id', 'rooms.name')
-            ->withCount('bookings')
-            ->with(['bookings' => function ($query) {
-                $query->selectRaw('ROUND(AVG(DATEDIFF(end, start))) as days_booked')
-                    ->groupBy('booking_room.room_id', 'booking_room.booking_id');
-            }])
+        $rooms = Booking::select('rooms.id', 'rooms.name', 'bookings.start', 'bookings.end')
+            ->join('booking_room', 'bookings.id', '=', 'booking_room.booking_id')
+            ->join('rooms', 'booking_room.room_id', '=', 'rooms.id')
             ->get();
+
+        $reportData = [];
+
+        foreach($rooms as $room) {
+            $roomId = $room->id;
+            $roomName = $room->name;
+            $bookingStart = $room->start;
+            $bookingEnd = $room->end;
+
+            $startDate = new \DateTime($bookingStart);
+            $endDate = new \DateTime($bookingEnd);
+
+            $dateDiff = $startDate->diff($endDate);
+
+            if (!isset($reportData[$roomId])) {
+                $reportData[$roomId] = [
+                    'id' => $roomId,
+                    'name' => $roomName,
+                    'total_stay_duration' => 0,
+                    'booking_count' => 0,
+                ];
+            }
+
+            $reportData[$roomId]['total_stay_duration'] += $dateDiff->days;
+            $reportData[$roomId]['booking_count']++;
+        }
+
+        foreach ($reportData as &$roomData) {
+            $roomData['average_booking_duration'] = $roomData['booking_count'] > 0 ? round($roomData['total_stay_duration'] / $roomData['booking_count']) : 0;
+            unset($roomData['total_stay_duration']);
+        }
+
+        $reportData = array_values($reportData);
+
+        $reportData = collect($reportData)->sortBy('id')->values()->all();
 
         return response()->json($this->responseService->getFormat(
             'report generated',
-            $report
+            $reportData
         ));
 
     }
