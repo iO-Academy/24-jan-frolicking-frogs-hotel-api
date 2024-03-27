@@ -17,8 +17,10 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
+
+        $hidden = ['description'];
         $search = $request->input('type');
-        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get();
+        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get()->makeHidden($hidden);
 
         if ($search) {
 
