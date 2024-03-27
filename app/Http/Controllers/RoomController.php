@@ -18,8 +18,10 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
+
+        $hidden = ['description'];
         $search = $request->input('type');
-        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get();
+        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get()->makeHidden($hidden);
 
         if ($search) {
 
@@ -28,9 +30,8 @@ class RoomController extends Controller
                     'The selected type is invalid.'));
             }
 
-            return response()->json(['data' => $data],200);
+            return response()->json(['data' => $data], 200);
         }
-
 
         $hidden = ['description', 'rate'];
 

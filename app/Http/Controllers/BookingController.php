@@ -87,7 +87,7 @@ class BookingController extends Controller
 
             return response()->json($this->responseService->getFormat(
                 'Bookings successfully retrieved by room',
-            $data), 200);
+                $data), 200);
         }
 
         return response()->json($this->responseService->getFormat(
