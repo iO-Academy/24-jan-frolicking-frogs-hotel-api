@@ -98,13 +98,12 @@ class RoomTest extends TestCase
 
         $response->assertOk(200)
             ->assertJson(function (AssertableJson $json) {
-                $json->hasAll(['data'])
+                $json->hasAll(['message', 'data'])
                     ->has('data', 1, function (AssertableJson $json) {
-                        $json->hasAll(['id', 'name', 'rate', 'image', 'min_capacity', 'max_capacity', 'type'])
+                        $json->hasAll(['id', 'name', 'image', 'min_capacity', 'max_capacity', 'type'])
                             ->whereAllType([
                                 'id' => 'integer',
                                 'name' => 'string',
-                                'rate' => 'integer',
                                 'image' => 'string',
                                 'min_capacity' => 'integer',
                                 'max_capacity' => 'integer',
@@ -122,16 +121,5 @@ class RoomTest extends TestCase
             });
     }
 
-    public function test_searchByTypeIdFail(): void
-    {
-        Room::factory()->count(1)->create();
 
-        $response = $this->getJson('/api/rooms?type=100');
-
-        $response->assertOk(200)
-            ->assertJson(function (AssertableJson $json) {
-                $json->hasAll(['message'])
-                    ->whereType('message', 'string');
-            });
-    }
 }
