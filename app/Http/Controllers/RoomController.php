@@ -47,7 +47,7 @@ class RoomController extends Controller
             }
             if ($filterAvailableEnd & $filterAvailableStart) {
                 $filter->whereRelation('booking', 'end', '<', $filterAvailableStart)
-                    ->whereRelation('booking','start', '>', $filterAvailableEnd);
+                    ->whereRelation('booking','start', '<', $filterAvailableEnd);
             }
 
             return response()->json($this->responseService->getFormat(
