@@ -73,8 +73,8 @@ class BookingController extends Controller
     public function all(Request $request)
     {
         $search = $request->input('room_id');
-        $hidden = ['guests', 'room_id', 'booking_id'];
-        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')->with('rooms:id,name')->where('room_id', 'LIKE', "$search")->get()->makeHidden($hidden);
+        $hidden = ['guests',];
+        $data = Booking::query()->join('booking_room', 'booking_id', '=', 'room_id')->with('rooms:id,name')->where('room_id', 'LIKE' , "%$search%")->get()->makeHidden($hidden);
 
 
         if ($search) {
