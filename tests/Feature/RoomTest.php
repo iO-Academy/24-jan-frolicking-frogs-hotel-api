@@ -10,10 +10,6 @@ use Tests\TestCase;
 class RoomTest extends TestCase
 {
     use DatabaseMigrations;
-
-    /**
-     * A basic feature test example.
-     */
     public function test_getAll_rooms_success(): void
     {
         Room::factory()->create();
@@ -48,7 +44,7 @@ class RoomTest extends TestCase
 
     public function test_getSingleRoomValid(): void
     {
-        $room = Room::factory()->create();
+        Room::factory()->create();
 
         $response = $this->getJson('/api/rooms/1');
 
@@ -89,4 +85,5 @@ class RoomTest extends TestCase
                     ->whereType('message', 'string');
             });
     }
+
 }
