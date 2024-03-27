@@ -29,6 +29,7 @@ class BookingController extends Controller
         $clashingDates = Booking::query()->join('booking_room', 'booking_id', '=', 'booking_id')
             ->where('room_id', $request->room_id)
             ->where('end', '>=', $request->start)
+            ->where('start', '<=', $request->end)
             ->exists();
 
         if ($clashingDates) {
@@ -78,7 +79,7 @@ class BookingController extends Controller
 
         $reportData = [];
 
-        foreach($rooms as $room) {
+        foreach ($rooms as $room) {
             $roomId = $room->id;
             $roomName = $room->name;
             $bookingStart = $room->start;
@@ -116,5 +117,17 @@ class BookingController extends Controller
             $reportData
         ), 200);
 
+    }
+
+
+    public function all()
+    {
+        $hidden = ['guests', 'updated_at'];
+        $date = today()->toDateString();
+
+        return response()->json($this->responseService->getFormat(
+            'Bookings successfully retrieved',
+            Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+        ));
     }
 }
