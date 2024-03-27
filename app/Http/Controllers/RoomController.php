@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
+use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
@@ -14,8 +16,22 @@ class RoomController extends Controller
         $this->responseService = $responseService;
     }
 
-    public function all()
+    public function all(Request $request)
     {
+        $search = $request->input('type');
+        $data = Room::with('type:id,name')->whereRelation('type', 'type_id', '=', "$search")->get();
+
+        if ($search) {
+
+            if ($data->isEmpty()) {
+                return response()->json($this->responseService->getFormat(
+                    'The selected type is invalid.'));
+            }
+
+            return response()->json(['data' => $data],200);
+        }
+
+
         $hidden = ['description', 'rate'];
 
         return response()->json($this->responseService->getFormat(
@@ -39,4 +55,6 @@ class RoomController extends Controller
         ), 200);
 
     }
+
+
 }
