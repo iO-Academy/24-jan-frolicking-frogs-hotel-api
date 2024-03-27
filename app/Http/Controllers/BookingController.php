@@ -70,6 +70,66 @@ class BookingController extends Controller
 
     }
 
+    public function report()
+    {
+        $rooms = Booking::select('rooms.id', 'rooms.name', 'bookings.start', 'bookings.end')
+            ->join('booking_room', 'bookings.id', '=', 'booking_room.booking_id')
+            ->join('rooms', 'booking_room.room_id', '=', 'rooms.id')
+            ->get();
+
+        // Loop through rooms as room to get each individual data set
+        foreach ($rooms as $room) {
+            $roomId = $room->id;
+            $roomName = $room->name;
+            $bookingStart = $room->start;
+            $bookingEnd = $room->end;
+
+            // Convert the dates into integer
+            $startDate = new \DateTime($bookingStart);
+            $endDate = new \DateTime($bookingEnd);
+
+            // Calculate the difference between the converted dates
+            $dateDiff = $startDate->diff($endDate);
+
+            // If there isn't a booking - display 0 for count and total stay duration
+            if (!isset($bookingData[$roomId])) {
+                $bookingData[$roomId] = [
+                    'id' => $roomId,
+                    'name' => $roomName,
+                    'total_stay_duration' => 0,
+                    'booking_count' => 0,
+                ];
+            }
+
+            // Sum of the days booked per room (to calc the average)
+            $bookingData[$roomId]['total_stay_duration'] += $dateDiff->days;
+
+            // Within the foreach loop, iterate through the bookings, and count the number of bookings for each room  (to calc the average)
+            $bookingData[$roomId]['booking_count']++;
+        }
+
+        // Loop through each of the booking data and access the booking count and total stay duration
+        foreach ($bookingData as &$roomData) {
+            // Ternary operator used to check if booking count is greater than 0, then run the average calc of 'total_stay_duration' / 'booking_count'
+            // Calc result is rounded to 1 decimal place, else the average returns 0
+            $roomData['average_booking_duration'] = $roomData['booking_count'] > 0 ? round($roomData['total_stay_duration'] / $roomData['booking_count'], 1) : 0;
+            // unset removes the 'total_stay_duration' from the results as it was only used for the average calc
+            unset($roomData['total_stay_duration']);
+        }
+
+        // Returns the reportData as an array to put into the empty array
+        $reportData = array_values($bookingData);
+
+        // Sorts the reportData by id value
+        $reportData = collect($reportData)->sortBy('id')->values()->all();
+
+        return response()->json($this->responseService->getFormat(
+            'report generated',
+            $reportData
+        ), 200);
+    }
+
+
     public function all()
     {
         $hidden = ['guests', 'updated_at'];
@@ -79,6 +139,5 @@ class BookingController extends Controller
             'Bookings successfully retrieved',
             Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
         ));
-
     }
 }
