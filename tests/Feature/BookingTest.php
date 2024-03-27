@@ -129,4 +129,27 @@ class BookingTest extends TestCase
 
 
     }
+
+    public function test_get_booking_report_success(): void
+    {
+        Booking::factory()->hasAttached(Room::factory())->create();
+
+        $response = $this->getJson('/api/bookings/report');
+
+        $response->assertStatus(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                ->whereType('message', 'string')
+                ->has('data', 1, function (AssertableJson $json) {
+                    $json->hasAll(['id', 'name', 'booking_count', 'average_booking_duration'])
+                        ->whereAllType([
+                            'id' => 'integer',
+                            'name' => 'string',
+                            'booking_count' => 'integer',
+                            'average_booking_duration' => 'integer'
+                        ]);
+                });
+            });
+    }
+
 }

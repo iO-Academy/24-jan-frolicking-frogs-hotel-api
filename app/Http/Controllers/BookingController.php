@@ -114,7 +114,7 @@ class BookingController extends Controller
         return response()->json($this->responseService->getFormat(
             'report generated',
             $reportData
-        ));
+        ), 200);
 
     }
 }
