@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Room;
-use App\Models\Type;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -109,7 +108,7 @@ class RoomTest extends TestCase
                                 'image' => 'string',
                                 'min_capacity' => 'integer',
                                 'max_capacity' => 'integer',
-                                'description' => 'string'
+                                'description' => 'string',
                             ])
                             ->has('type', function (AssertableJson $json) {
                                 $json->hasAll(['id', 'name'])
