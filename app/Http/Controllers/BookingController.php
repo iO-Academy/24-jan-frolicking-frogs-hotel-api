@@ -104,7 +104,7 @@ class BookingController extends Controller
         }
 
         foreach ($reportData as &$roomData) {
-            $roomData['average_booking_duration'] = $roomData['booking_count'] > 0 ? round($roomData['total_stay_duration'] / $roomData['booking_count']) : 0;
+            $roomData['average_booking_duration'] = $roomData['booking_count'] > 0 ? round($roomData['total_stay_duration'] / $roomData['booking_count'], 1) : 0;
             unset($roomData['total_stay_duration']);
         }
 
