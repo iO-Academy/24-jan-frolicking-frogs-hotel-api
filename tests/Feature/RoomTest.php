@@ -121,5 +121,67 @@ class RoomTest extends TestCase
             });
     }
 
+    public function test_searchByCapacity_Success(): void
+    {
+       Room::factory()->count(1)->create();
+
+        $response = $this->getJson('/api/rooms?guests=4');
+
+        $response->assertOk(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                    ->has('data', 1, function (AssertableJson $json) {
+                        $json->hasAll(['id', 'name', 'image', 'min_capacity', 'max_capacity', 'type'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'name' => 'string',
+                                'image' => 'string',
+                                'min_capacity' => 'integer',
+                                'max_capacity' => 'integer',
+                            ])
+                            ->has('type', function (AssertableJson $json) {
+                                $json->hasAll(['id', 'name'])
+                                    ->whereAllType([
+                                        'id' => 'integer',
+                                        'name' => 'string',
+                                    ]);
+                            }
+
+                            );
+                    });
+            });
+    }
+
+    public function test_searchByCapacity_andType_Success(): void
+    {
+        Room::factory()->count(1)->create();
+        Room::factory()->create();
+
+        $response = $this->getJson('/api/rooms?guests=4&type=1');
+
+        $response->assertOk(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                    ->has('data', 1, function (AssertableJson $json) {
+                        $json->hasAll(['id', 'name', 'image', 'min_capacity', 'max_capacity', 'type'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'name' => 'string',
+                                'image' => 'string',
+                                'min_capacity' => 'integer',
+                                'max_capacity' => 'integer',
+                            ])
+                            ->has('type', function (AssertableJson $json) {
+                                $json->hasAll(['id', 'name'])
+                                    ->whereAllType([
+                                        'id' => 'integer',
+                                        'name' => 'string',
+                                    ]);
+                            }
+
+                            );
+                    });
+            });
+    }
 
 }
