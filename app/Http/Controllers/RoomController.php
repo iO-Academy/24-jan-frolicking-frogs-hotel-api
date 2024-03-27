@@ -18,19 +18,23 @@ class RoomController extends Controller
 
     public function all(Request $request)
     {
-        $hidden = ['description', 'rate'];
+        $hidden = ['description', 'rate', 'booking'];
 
-        $filter = Room::query()->with('type:id,name');
+        $filter = Room::query()->with(['type:id,name', 'booking:id,start,end']);
 
         $filterType = $request->input('type');
         $filterCapacity = $request->input('guests');
-        $filterRooms = $filterCapacity + $filterType;
+        $filterAvailableStart = $request->input('start');
+        $filterAvailableEnd = $request->input('end');
+        $filterRooms = [$filterCapacity, $filterType, $filterAvailableEnd, $filterAvailableStart];
 
         if ($filterRooms) {
 
             $request->validate([
                 'type' => 'exists:types,id',
-                'guests' => 'integer|min:0'
+                'guests' => 'integer|min:0',
+                'start' => 'date',
+                'end' => 'date'
             ]);
 
             if ($filterType) {
@@ -40,6 +44,10 @@ class RoomController extends Controller
             if ($filterCapacity) {
                 $filter->where('min_capacity', '<=', "$filterCapacity")
                     ->where('max_capacity', '>=', "$filterCapacity");
+            }
+            if ($filterAvailableEnd & $filterAvailableStart) {
+                $filter->whereRelation('booking', 'end', '<', $filterAvailableStart)
+                    ->whereRelation('booking','start', '>', $filterAvailableEnd);
             }
 
             return response()->json($this->responseService->getFormat(
