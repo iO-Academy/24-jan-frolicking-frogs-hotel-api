@@ -96,4 +96,19 @@ class BookingController extends Controller
                 ->orderBy('start', 'asc')->get()->makeHidden($hidden)
         ));
     }
+
+        public function delete(int $id)
+        {
+            $booking = Booking::find($id);
+            if (!$booking) {
+                return response()->json($this->responseService
+                    ->getFormat('Unable to cancel booking, booking ' . $id . ' not found'));
+            }
+
+            $booking->delete();
+
+            return response()->json($this->responseService
+                ->getFormat('Booking ' . $id . ' deleted'));
+        }
+
 }

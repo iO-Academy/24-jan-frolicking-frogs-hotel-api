@@ -134,4 +134,23 @@ class BookingTest extends TestCase
                     });
             });
     }
+
+    public function test_delete_booking_success()
+    {
+        $booking = Booking::factory()->create();
+        $booking->customer = 'missing';
+        $booking->save();
+
+        $response = $this->deleteJson('/api/bookings/1');
+
+        $response->assertOk()
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message'])
+                    ->whereType('message', 'string');
+            });
+
+        $this->assertDatabaseMissing('bookings', [
+            'name' => $booking->customer
+        ]);
+    }
 }
