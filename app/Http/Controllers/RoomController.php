@@ -45,9 +45,10 @@ class RoomController extends Controller
                 $filter->where('min_capacity', '<=', "$filterCapacity")
                     ->where('max_capacity', '>=', "$filterCapacity");
             }
-            if ($filterAvailableEnd & $filterAvailableStart) {
-                $filter->whereRelation('booking', 'end', '<', $filterAvailableStart)
-                    ->whereRelation('booking','start', '<', $filterAvailableEnd);
+            if ($filterAvailableEnd && $filterAvailableStart) {
+                $filter->whereRelation('booking', 'start', '<=', $filterAvailableStart)
+                    ->whereRelation('booking', 'end', '<=', $filterAvailableStart)
+                    ->orWhereRelation('booking','start', '>=', $filterAvailableEnd);
             }
 
             return response()->json($this->responseService->getFormat(
