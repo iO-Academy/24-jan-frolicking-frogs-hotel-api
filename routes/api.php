@@ -18,4 +18,5 @@ Route::controller(RoomController::class)->group(function () {
 Route::controller(BookingController::class)->group(function () {
     Route::post('/bookings', 'create')->middleware(BookingValidator::class);
     Route::get('/bookings', 'all');
+    Route::delete('/bookings/{id}', 'delete');
 });

@@ -134,4 +134,20 @@ class BookingTest extends TestCase
                     });
             });
     }
+
+    public function test_searchBookedRoomId_Success(): void
+    {
+        $booking = Booking::factory()->has(Room::factory())->count(2)->create();
+
+
+        $response = $this->getJson('/api/bookings?rooms_id=1');
+        $response->assertStatus(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->hasAll(['message', 'data'])
+                    ->has('data', function (AssertableJson $json) {
+                        $json->hasAll(['id', 'customer', 'start', 'end', 'created_at', 'rooms']);
+                    });
+            });
+
+    }
 }

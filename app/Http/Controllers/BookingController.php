@@ -49,14 +49,14 @@ class BookingController extends Controller
 
         if ($clash2->value('max_capacity') < $request->guests) {
             return response()->json($this->responseService->getFormat(
-                'The ' . $clash2->value('name') . ' room can only accommodate between ' . $clash2->value('min_capacity') . ' and ' . $clash2->value('max_capacity') . ' guests'), 400);
+                'The '.$clash2->value('name').' room can only accommodate between '.$clash2->value('min_capacity').' and '.$clash2->value('max_capacity').' guests'), 400);
         }
 
         $save = $booking->save();
 
         $booking->rooms()->attach($request->room_id);
 
-        if (!$save) {
+        if (! $save) {
             Log::error('Booking failed');
 
             return response()->json($this->responseService->getFormat(
@@ -77,8 +77,25 @@ class BookingController extends Controller
 
         return response()->json($this->responseService->getFormat(
             'Bookings successfully retrieved',
-            Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+            Booking::with('rooms:id, name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
         ));
 
     }
+
+    public function delete(int $id) {
+        $booking = Booking::find($id);
+
+        if (! $booking) {
+            return response()->json($this->responseService->getFormat(
+                 'Unable to cancel booking, booking '.$id.' not found',
+            ), 404);
+        }
+
+        $booking->delete();
+
+        return response()->json($this->responseService->getFormat(
+            'Booking '.$id.' cancelled'
+        ), 200);
+    }
+
 }
