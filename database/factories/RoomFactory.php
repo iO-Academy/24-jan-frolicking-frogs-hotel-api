@@ -21,8 +21,8 @@ class RoomFactory extends Factory
             'name' => $this->faker->text(255),
             'rate' => rand(1, 100),
             'image' => $this->faker->imageUrl(400, 400),
+            'max_capacity' => 5,
             'min_capacity' => 2,
-            'max_capacity' => $this->faker->numberBetween(1, 11),
             'description' => $this->faker->text(255),
             'type_id' => Type::factory(),
         ];

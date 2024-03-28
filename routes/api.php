@@ -19,4 +19,9 @@ Route::controller(BookingController::class)->group(function () {
     Route::post('/bookings', 'create')->middleware(BookingValidator::class);
     Route::get('/bookings/report', 'report');
     Route::get('/bookings', 'all');
+    Route::delete('/bookings/{id}', 'delete');
+});
+
+Route::controller(\App\Http\Controllers\TypeController::class)->group(function () {
+    Route::get('/types', 'all');
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Services\JsonResponseService;
+use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
@@ -14,9 +15,35 @@ class RoomController extends Controller
         $this->responseService = $responseService;
     }
 
-    public function all()
+    public function all(Request $request)
     {
         $hidden = ['description', 'rate'];
+
+        $filter = Room::query()->with('type:id,name');
+
+        $filterType = $request->input('type');
+        $filterCapacity = $request->input('guests');
+        $filterRooms = $filterCapacity + $filterType;
+
+        if ($filterRooms) {
+
+            $request->validate([
+                'type' => 'exists:types,id',
+                'guests' => 'integer|min:0',
+            ]);
+
+            if ($filterType) {
+                $filter->whereRelation('type', 'type_id', '=', "$filterType");
+
+            }
+            if ($filterCapacity) {
+                $filter->where('min_capacity', '<=', "$filterCapacity")
+                    ->where('max_capacity', '>=', "$filterCapacity");
+            }
+
+            return response()->json($this->responseService->getFormat(
+                'Rooms successfully retrieved', $filter->get()->makeHidden($hidden)));
+        }
 
         return response()->json($this->responseService->getFormat(
             'Rooms successfully retrieved',

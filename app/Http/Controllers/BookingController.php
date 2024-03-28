@@ -92,7 +92,7 @@ class BookingController extends Controller
             $dateDiff = $startDate->diff($endDate);
 
             // If there isn't a booking - display 0 for count and total stay duration
-            if (!isset($bookingData[$roomId])) {
+            if (! isset($bookingData[$roomId])) {
                 $bookingData[$roomId] = [
                     'id' => $roomId,
                     'name' => $roomName,
@@ -129,15 +129,39 @@ class BookingController extends Controller
         ), 200);
     }
 
-
-    public function all()
+    public function all(Request $request)
     {
-        $hidden = ['guests', 'updated_at'];
+        $RoomFilter = $request->input('room_id');
+        $hidden = ['guests', 'room_id', 'booking_id', 'guests', 'updated_at'];
         $date = today()->toDateString();
+
+        if ($RoomFilter) {
+
+            return response()->json($this->responseService->getFormat(
+                'Bookings successfully retrieved',
+                Booking::with(['rooms:id,name'])->whereRelation('rooms', 'room_id', '=', "$RoomFilter")
+                    ->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)), 200);
+
+        }
 
         return response()->json($this->responseService->getFormat(
             'Bookings successfully retrieved',
-            Booking::with('rooms:id,name')->whereDate('end', '>=', $date)->orderBy('start', 'asc')->get()->makeHidden($hidden)
+            Booking::with('rooms:id,name')->whereDate('end', '>=', $date)
+                ->orderBy('start', 'asc')->get()->makeHidden($hidden)
         ));
+    }
+
+    public function delete(int $id)
+    {
+        $booking = Booking::find($id);
+        if (! $booking) {
+            return response()->json($this->responseService
+                ->getFormat('Unable to cancel booking, booking '.$id.' not found'));
+        }
+
+        $booking->delete();
+
+        return response()->json($this->responseService
+            ->getFormat('Booking '.$id.' deleted'));
     }
 }
