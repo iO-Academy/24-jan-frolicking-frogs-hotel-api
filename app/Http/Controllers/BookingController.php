@@ -92,7 +92,7 @@ class BookingController extends Controller
             $dateDiff = $startDate->diff($endDate);
 
             // If there isn't a booking - display 0 for count and total stay duration
-            if (!isset($bookingData[$roomId])) {
+            if (! isset($bookingData[$roomId])) {
                 $bookingData[$roomId] = [
                     'id' => $roomId,
                     'name' => $roomName,
@@ -129,9 +129,7 @@ class BookingController extends Controller
         ), 200);
     }
 
-
     public function all(Request $request)
-
     {
         $RoomFilter = $request->input('room_id');
         $hidden = ['guests', 'room_id', 'booking_id', 'guests', 'updated_at'];
@@ -153,18 +151,17 @@ class BookingController extends Controller
         ));
     }
 
-        public function delete(int $id)
-        {
-            $booking = Booking::find($id);
-            if (!$booking) {
-                return response()->json($this->responseService
-                    ->getFormat('Unable to cancel booking, booking ' . $id . ' not found'));
-            }
-
-            $booking->delete();
-
+    public function delete(int $id)
+    {
+        $booking = Booking::find($id);
+        if (! $booking) {
             return response()->json($this->responseService
-                ->getFormat('Booking ' . $id . ' deleted'));
+                ->getFormat('Unable to cancel booking, booking '.$id.' not found'));
         }
 
+        $booking->delete();
+
+        return response()->json($this->responseService
+            ->getFormat('Booking '.$id.' deleted'));
+    }
 }

@@ -123,7 +123,7 @@ class RoomTest extends TestCase
 
     public function test_searchByCapacity_Success(): void
     {
-       Room::factory()->count(1)->create();
+        Room::factory()->count(1)->create();
 
         $response = $this->getJson('/api/rooms?guests=4');
 
@@ -183,5 +183,4 @@ class RoomTest extends TestCase
                     });
             });
     }
-
 }
