@@ -33,8 +33,8 @@ class RoomController extends Controller
             $request->validate([
                 'type' => 'exists:types,id',
                 'guests' => 'integer|min:0',
-                'start' => 'date',
-                'end' => 'date'
+                'start' => 'date|required_with:end',
+                'end' => 'date|required_with:start|after:start'
             ]);
 
             if ($filterAvailableEnd && $filterAvailableStart) {
