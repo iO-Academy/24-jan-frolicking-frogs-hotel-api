@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Room;
 use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

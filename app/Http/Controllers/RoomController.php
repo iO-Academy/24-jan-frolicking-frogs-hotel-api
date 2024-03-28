@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
 use App\Models\Room;
 use App\Services\JsonResponseService;
 use Illuminate\Http\Request;
@@ -75,6 +74,4 @@ class RoomController extends Controller
         ), 200);
 
     }
-
-
 }
